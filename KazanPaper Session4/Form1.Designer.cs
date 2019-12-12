@@ -85,21 +85,23 @@
             // 
             // EditItemBtn
             // 
-            this.EditItemBtn.Location = new System.Drawing.Point(96, 403);
+            this.EditItemBtn.Location = new System.Drawing.Point(222, 403);
             this.EditItemBtn.Name = "EditItemBtn";
             this.EditItemBtn.Size = new System.Drawing.Size(126, 35);
             this.EditItemBtn.TabIndex = 5;
             this.EditItemBtn.Text = "Edit Item!";
             this.EditItemBtn.UseVisualStyleBackColor = true;
+            this.EditItemBtn.Click += new System.EventHandler(this.EditItemBtn_Click);
             // 
             // RmItemBtn
             // 
-            this.RmItemBtn.Location = new System.Drawing.Point(414, 403);
+            this.RmItemBtn.Location = new System.Drawing.Point(424, 403);
             this.RmItemBtn.Name = "RmItemBtn";
             this.RmItemBtn.Size = new System.Drawing.Size(126, 35);
             this.RmItemBtn.TabIndex = 6;
             this.RmItemBtn.Text = "Remove Item!";
             this.RmItemBtn.UseVisualStyleBackColor = true;
+            this.RmItemBtn.Click += new System.EventHandler(this.RmItemBtn_Click);
             // 
             // Form1
             // 

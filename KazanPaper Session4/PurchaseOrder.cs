@@ -71,22 +71,24 @@ namespace KazanPaper_Session4
         private void CancelBtn_Click(object sender, EventArgs e)
         {
             this.Hide();
-            var query = db.Orders.Where(x=> x.ID == orderq.ID).FirstOrDefault();
-            db.Orders.Remove(query);
-            try
+            if(AddOrEdit == "a")
             {
-                db.SaveChanges();
+                var query = db.Orders.Where(x => x.ID == orderq.ID).FirstOrDefault();
+                db.Orders.Remove(query);
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception es)
+                {
+                    MessageBox.Show(es.ToString());
+                }
             }
-            catch (Exception es)
-            {
-                MessageBox.Show(es.ToString());
-            }
+            
         }
 
         private void AddtolistBtn_Click(object sender, EventArgs e)
         {
-            if (AddOrEdit == "a")
-            {
                 OrderItem orderItem = new OrderItem();
                 if (BatchNOTxt.Text == "")
                 {
@@ -104,9 +106,18 @@ namespace KazanPaper_Session4
                 {
                     MessageBox.Show("Invalid Amount!");
                 }
+             if(AddOrEdit == "a")
+            {
                 var ID = db.Orders.OrderByDescending(x => x.ID).FirstOrDefault();
                 orderItem.OrderID = ID.ID;
+            }
+            else if(AddOrEdit == "e")
+            {
+                var ID = orderq.ID;
+                orderItem.OrderID = ID;
+            }
                 string partname = PartnameBox.Text.Trim();
+            MessageBox.Show(partname);
                 var query5 = db.Parts.Where(x => x.Name == partname).FirstOrDefault();
                 orderItem.PartID = query5.ID;
                 db.OrderItems.Add(orderItem);
@@ -122,7 +133,6 @@ namespace KazanPaper_Session4
                 {
                     MessageBox.Show(es.ToString());
                 }
-            }
         }
 
         private void AmtNOTxt_TextChanged(object sender, EventArgs e)
@@ -163,29 +173,36 @@ namespace KazanPaper_Session4
 
         private void SubmitBtn_Click(object sender, EventArgs e)
         {
-            if(AddOrEdit == "a")
+            Order order = null;
+            if (AddOrEdit == "a")
             {
-                Order order = db.Orders.OrderByDescending(x => x.ID).FirstOrDefault();
-
-                var val = SuppliersBox.Text;
-                var query = db.Suppliers.Where(x => x.Name == val).FirstOrDefault();
-                order.SupplierID = query.ID;
-
-                var val2 = WarehouseBox.Text;
-                var query2 = db.Warehouses.Where(x => x.Name == val2).FirstOrDefault();
-                order.SourceWarehouseID = query2.ID;
-
-                var val3 = dateTimePicker.Value;
-                order.Date = val3;
-
-                try {
-                    db.SaveChanges();
-                    this.Hide();
-                }catch(Exception es)
-                {
-                    MessageBox.Show(es.ToString());
-                }
+                order = db.Orders.OrderByDescending(x => x.ID).FirstOrDefault();
                 
+            }
+            else if(AddOrEdit == "e")
+            {
+                order = db.Orders.Where(x => x.ID == orderq.ID).FirstOrDefault();
+            }
+
+            var val = SuppliersBox.Text;
+            var query = db.Suppliers.Where(x => x.Name == val).FirstOrDefault();
+            order.SupplierID = query.ID;
+
+            var val2 = WarehouseBox.Text;
+            var query2 = db.Warehouses.Where(x => x.Name == val2).FirstOrDefault();
+            order.SourceWarehouseID = query2.ID;
+
+            var val3 = dateTimePicker.Value;
+            order.Date = val3;
+
+            try
+            {
+                db.SaveChanges();
+                this.Hide();
+            }
+            catch (Exception es)
+            {
+                MessageBox.Show(es.ToString());
             }
         }
     }

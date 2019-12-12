@@ -19,11 +19,13 @@ namespace KazanPaper_Session4
             var query4 = db.OrderItems.ToList();
             dataGridView1.DataSource = CDBT(query4);
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.Columns["ID"].Visible = false;
         }
 
         DataTable CDBT(List<OrderItem> orderItem)
         {
             DataTable table = new DataTable();
+            table.Columns.Add("ID");
             table.Columns.Add("Part Name");
             table.Columns.Add("Transaction Type");
             table.Columns.Add("Date");
@@ -36,6 +38,7 @@ namespace KazanPaper_Session4
             {
                 DataRow dataRow = table.NewRow();
                 var query = db.Orders.Where(x => x.ID == item.OrderID).FirstOrDefault();
+                dataRow["ID"] = item.OrderID;
                 dataRow["Part Name"] = item.Part.Name;
                 dataRow["Transaction Type"] = query.TransactionType.Name;
                 dataRow["Date"] = query.Date;
@@ -77,6 +80,31 @@ namespace KazanPaper_Session4
             var query = db.Orders.OrderByDescending(x => x.ID).FirstOrDefault();
             PurchaseOrder purchaseOrder = new PurchaseOrder("a", query);
             purchaseOrder.ShowDialog();
+        }
+
+        private void EditItemBtn_Click(object sender, EventArgs e)
+        {
+            if(dataGridView1.SelectedRows.Count == 1)
+            {
+                foreach(DataGridViewRow row in dataGridView1.SelectedRows)
+                {
+                    var order = long.Parse(row.Cells["ID"].Value.ToString());
+                    var query = db.Orders.Where(x => x.ID == order).FirstOrDefault();
+                    PurchaseOrder purchaseOrder = new PurchaseOrder("e", query);
+                    purchaseOrder.ShowDialog();
+                }
+                
+            }
+            else
+            {
+                MessageBox.Show("Invalid Selection!");
+            }
+            
+        }
+
+        private void RmItemBtn_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
