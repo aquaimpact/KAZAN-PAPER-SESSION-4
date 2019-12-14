@@ -20,6 +20,18 @@ namespace KazanPaper_Session4
             dataGridView1.DataSource = CDBT(query4);
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Columns["ID"].Visible = false;
+            links();
+        }
+
+        private void links()
+        {
+            DataGridViewLinkColumn links = new DataGridViewLinkColumn();
+
+            links.UseColumnTextForLinkValue = true;
+            links.HeaderText = "Actions";
+            links.Text = "Add";
+
+            dataGridView1.Columns.Add(links);
         }
 
         DataTable CDBT(List<OrderItem> orderItem)
@@ -32,9 +44,8 @@ namespace KazanPaper_Session4
             table.Columns.Add("Amount");
             table.Columns.Add("Source");
             table.Columns.Add("Destination");
-            table.Columns.Add("Actions");
 
-            foreach(var item in orderItem)
+            foreach (var item in orderItem)
             {
                 DataRow dataRow = table.NewRow();
                 var query = db.Orders.Where(x => x.ID == item.OrderID).FirstOrDefault();
@@ -58,27 +69,7 @@ namespace KazanPaper_Session4
 
         private void POMBtn_Click(object sender, EventArgs e)
         {
-            //just create a new add template for the object.
-            
-
-            Order order = new Order();
-            order.TransactionTypeID = 1;
-            order.SupplierID = 1;
-            order.SourceWarehouseID = 1;
-            order.DestinationWarehouseID = 1;
-            order.Date = DateTime.Now;
-
-            db.Orders.Add(order);
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (Exception es)
-            {
-                MessageBox.Show(es.ToString());
-            }
-            var query = db.Orders.OrderByDescending(x => x.ID).FirstOrDefault();
-            PurchaseOrder purchaseOrder = new PurchaseOrder("a", query);
+            PurchaseOrder purchaseOrder = new PurchaseOrder("a");
             purchaseOrder.ShowDialog();
         }
 
@@ -104,7 +95,63 @@ namespace KazanPaper_Session4
 
         private void RmItemBtn_Click(object sender, EventArgs e)
         {
+            if (dataGridView1.SelectedRows.Count == 1)
+            {
+                foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+                {
+                    var order = long.Parse(row.Cells["ID"].Value.ToString());
+                    var query = db.Orders.Where(x => x.ID == order).FirstOrDefault();
+                    var query2 = db.OrderItems.Where(x => x.OrderID == order);
+                    foreach (var item in query2)
+                    {
+                        db.OrderItems.Remove(item);
+                    }
+                    db.Orders.Remove(query);
+                    try
+                    {
+                        db.SaveChanges();
+                        MessageBox.Show("Successfully Deleted!");
+                        var query4 = db.OrderItems.ToList();
+                        dataGridView1.DataSource = CDBT(query4);
+                        dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                        dataGridView1.Columns["ID"].Visible = false;
+                    }
+                    catch (Exception es)
+                    {
+                        MessageBox.Show(es.ToString());
+                    }
+                    
+                }
 
+            }
+            else
+            {
+                MessageBox.Show("Invalid Selection!");
+            }
+        }
+
+        private void WMBtn_Click(object sender, EventArgs e)
+        {
+            Order order = new Order();
+            order.TransactionTypeID = 2;
+            order.SupplierID = 1;
+            order.SourceWarehouseID = 1;
+            order.DestinationWarehouseID = 1;
+            order.Date = DateTime.Now;
+
+            db.Orders.Add(order);
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception es)
+            {
+                MessageBox.Show(es.ToString());
+            }
+            //var query = db.Orders.OrderByDescending(x => x.ID).FirstOrDefault();
+            var query = db.Orders.Last();
+            WarehouseManagement warehouse = new WarehouseManagement("a", query);
+            warehouse.ShowDialog();
         }
     }
 }

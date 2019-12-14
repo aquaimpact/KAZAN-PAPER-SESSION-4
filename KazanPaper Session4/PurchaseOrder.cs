@@ -14,22 +14,23 @@ namespace KazanPaper_Session4
     {
         Session4Entities db = new Session4Entities();
         private string AddOrEdit;
-        private Order orderq;
+        private List<OrderItem> ordersItem = new List<OrderItem>();
+        private Order orderq, editOrder;
 
-        public PurchaseOrder(string AddOrEdt, Order order)
+        public PurchaseOrder(string AddOrEdt, Order orders = null)
         {
             InitializeComponent();
-            orderq = order;
             AddOrEdit = AddOrEdt;
+            editOrder = orders;
             var suppliers = db.Suppliers.ToList();
-            foreach(var item in suppliers)
+            foreach (var item in suppliers)
             {
                 SuppliersBox.Items.Add(item.Name);
             }
             SuppliersBox.SelectedIndex = 0;
 
             var warehouses = db.Warehouses.ToList();
-            foreach(var item in warehouses)
+            foreach (var item in warehouses)
             {
                 WarehouseBox.Items.Add(item.Name);
             }
@@ -38,13 +39,29 @@ namespace KazanPaper_Session4
             dateTimePicker.Value = DateTime.Now;
 
             var partnames = db.Parts.ToList();
-            foreach(var item in partnames)
+            foreach (var item in partnames)
             {
                 PartnameBox.Items.Add(item.Name);
             }
-            var query = db.OrderItems.Where(x => x.OrderID == order.ID).ToList();
-            dataGridView1.DataSource = CDBT(query);
-            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+            //Creating a new Order
+            Order order = new Order();
+            order.TransactionTypeID = 1;
+            order.SupplierID = 1;
+            order.SourceWarehouseID = 1;
+            order.DestinationWarehouseID = 1;
+            order.Date = DateTime.Now;
+            orderq = order;
+
+            if (AddOrEdit == "e")
+            {
+                WarehouseBox.SelectedIndex = (int)editOrder.SourceWarehouseID - 1;
+                SuppliersBox.SelectedIndex = (int)editOrder.SupplierID - 1;
+                dateTimePicker.Value = editOrder.Date;
+                var query2 = db.OrderItems.Where(x => x.OrderID == editOrder.ID).ToList();
+                dataGridView1.DataSource = CDBT(query2);
+                dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            }
 
         }
 
@@ -56,10 +73,11 @@ namespace KazanPaper_Session4
             table.Columns.Add("Amount");
             table.Columns.Add("Action");
 
-            foreach(var item in parts)
+            foreach (var item in parts)
             {
                 DataRow dataRow = table.NewRow();
-                dataRow["Part Name"] = item.Part.Name;
+                var query = db.Parts.Where(x => x.ID == item.PartID).FirstOrDefault();
+                dataRow["Part Name"] = query.Name;
                 dataRow["Batch Number"] = item.BatchNumber;
                 dataRow["Amount"] = item.Amount;
                 //dataRow["Action"]
@@ -71,73 +89,58 @@ namespace KazanPaper_Session4
         private void CancelBtn_Click(object sender, EventArgs e)
         {
             this.Hide();
-            if(AddOrEdit == "a")
-            {
-                var query = db.Orders.Where(x => x.ID == orderq.ID).FirstOrDefault();
-                db.Orders.Remove(query);
-                try
-                {
-                    db.SaveChanges();
-                }
-                catch (Exception es)
-                {
-                    MessageBox.Show(es.ToString());
-                }
-            }
-            
         }
 
         private void AddtolistBtn_Click(object sender, EventArgs e)
         {
-                OrderItem orderItem = new OrderItem();
-                if (BatchNOTxt.Text == "")
-                {
-                    orderItem.BatchNumber = null;
-                }
-                else
-                {
-                    orderItem.BatchNumber = BatchNOTxt.Text.Trim();
-                }
-                try
-                {
-                    orderItem.Amount = decimal.Parse(AmtNOTxt.Text.Trim());
-                }
-                catch
-                {
-                    MessageBox.Show("Invalid Amount!");
-                }
-             if(AddOrEdit == "a")
+            OrderItem orderItem = new OrderItem();
+            if (BatchNOTxt.Text == "")
             {
-                var ID = db.Orders.OrderByDescending(x => x.ID).FirstOrDefault();
-                orderItem.OrderID = ID.ID;
+                orderItem.BatchNumber = null;
+            }
+            else
+            {
+                orderItem.BatchNumber = BatchNOTxt.Text.Trim();
+            }
+            try
+            {
+                orderItem.Amount = decimal.Parse(AmtNOTxt.Text.Trim());
+            }
+            catch
+            {
+                MessageBox.Show("Invalid Amount!");
+            }
+            string partname = PartnameBox.Text.Trim();
+            var query5 = db.Parts.Where(x => x.Name == partname).FirstOrDefault();
+            orderItem.PartID = query5.ID;
+            if(AddOrEdit == "a")
+            {
+                ordersItem.Add(orderItem);
+                dataGridView1.DataSource = CDBT(ordersItem);
             }
             else if(AddOrEdit == "e")
             {
-                var ID = orderq.ID;
-                orderItem.OrderID = ID;
-            }
-                string partname = PartnameBox.Text.Trim();
-            MessageBox.Show(partname);
-                var query5 = db.Parts.Where(x => x.Name == partname).FirstOrDefault();
-                orderItem.PartID = query5.ID;
-                db.OrderItems.Add(orderItem);
+                orderItem.OrderID = editOrder.ID;
+                OrderItem order1 = db.OrderItems.Add(orderItem);
                 try
                 {
                     db.SaveChanges();
-                    var id = orderq.ID;
-                    var query = db.OrderItems.Where(x => x.OrderID == id).ToList();
-                    dataGridView1.DataSource = CDBT(query);
-                    dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                 }
-                catch (Exception es)
+                catch(Exception es)
                 {
                     MessageBox.Show(es.ToString());
                 }
+                var query2 = db.OrderItems.Where(x => x.OrderID == editOrder.ID).ToList();
+                dataGridView1.DataSource = CDBT(query2);
+            }
+            
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
 
         private void AmtNOTxt_TextChanged(object sender, EventArgs e)
         {
-            if(AmtNOTxt.TextLength > 1){
+            if (AmtNOTxt.TextLength > 1)
+            {
                 try
                 {
                     double value = double.Parse(AmtNOTxt.Text);
@@ -151,8 +154,8 @@ namespace KazanPaper_Session4
                     MessageBox.Show("Amount cannot contain words!");
                 }
             }
-            
-            
+
+
         }
 
         private void PartnameBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -176,12 +179,12 @@ namespace KazanPaper_Session4
             Order order = null;
             if (AddOrEdit == "a")
             {
-                order = db.Orders.OrderByDescending(x => x.ID).FirstOrDefault();
-                
+                order = orderq;
+
             }
-            else if(AddOrEdit == "e")
+            else if (AddOrEdit == "e")
             {
-                order = db.Orders.Where(x => x.ID == orderq.ID).FirstOrDefault();
+                order = db.Orders.Where(x => x.ID == editOrder.ID).FirstOrDefault();
             }
 
             var val = SuppliersBox.Text;
@@ -195,9 +198,24 @@ namespace KazanPaper_Session4
             var val3 = dateTimePicker.Value;
             order.Date = val3;
 
+            Order ordersss = db.Orders.Add(order);
             try
             {
                 db.SaveChanges();
+
+                if(AddOrEdit == "a")
+                {
+                    var id = ordersss.ID;
+                    var query3 = db.Orders.Where(x => x.ID == id).FirstOrDefault();
+                    foreach (var item in ordersItem)
+                    {
+                        item.OrderID = query3.ID;
+                        OrderItem ordersssss = db.OrderItems.Add(item);
+                    }
+
+                    db.SaveChanges();
+                }
+
                 this.Hide();
             }
             catch (Exception es)

@@ -46,14 +46,16 @@
             this.PartnameBox = new System.Windows.Forms.ComboBox();
             this.SubmitBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(35, 21);
+            this.label1.Location = new System.Drawing.Point(49, 28);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(79, 20);
             this.label1.TabIndex = 0;
@@ -62,7 +64,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(369, 21);
+            this.label2.Location = new System.Drawing.Point(383, 28);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(95, 20);
             this.label2.TabIndex = 1;
@@ -107,7 +109,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(35, 104);
+            this.label7.Location = new System.Drawing.Point(49, 111);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(48, 20);
             this.label7.TabIndex = 6;
@@ -116,7 +118,7 @@
             // SuppliersBox
             // 
             this.SuppliersBox.FormattingEnabled = true;
-            this.SuppliersBox.Location = new System.Drawing.Point(39, 44);
+            this.SuppliersBox.Location = new System.Drawing.Point(53, 51);
             this.SuppliersBox.Name = "SuppliersBox";
             this.SuppliersBox.Size = new System.Drawing.Size(262, 28);
             this.SuppliersBox.TabIndex = 7;
@@ -124,14 +126,14 @@
             // WarehouseBox
             // 
             this.WarehouseBox.FormattingEnabled = true;
-            this.WarehouseBox.Location = new System.Drawing.Point(373, 44);
+            this.WarehouseBox.Location = new System.Drawing.Point(387, 51);
             this.WarehouseBox.Name = "WarehouseBox";
             this.WarehouseBox.Size = new System.Drawing.Size(278, 28);
             this.WarehouseBox.TabIndex = 8;
             // 
             // dateTimePicker
             // 
-            this.dateTimePicker.Location = new System.Drawing.Point(89, 99);
+            this.dateTimePicker.Location = new System.Drawing.Point(103, 106);
             this.dateTimePicker.Name = "dateTimePicker";
             this.dateTimePicker.Size = new System.Drawing.Size(200, 26);
             this.dateTimePicker.TabIndex = 9;
@@ -215,11 +217,19 @@
             this.CancelBtn.UseVisualStyleBackColor = true;
             this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
             // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(546, 111);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(120, 26);
+            this.numericUpDown1.TabIndex = 17;
+            // 
             // PurchaseOrder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.SubmitBtn);
             this.Controls.Add(this.dateTimePicker);
@@ -235,6 +245,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -260,5 +271,6 @@
         private System.Windows.Forms.ComboBox PartnameBox;
         private System.Windows.Forms.Button SubmitBtn;
         private System.Windows.Forms.Button CancelBtn;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
     }
 }

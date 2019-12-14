@@ -65,6 +65,7 @@
             this.WMBtn.TabIndex = 2;
             this.WMBtn.Text = "Warehouse Management";
             this.WMBtn.UseVisualStyleBackColor = true;
+            this.WMBtn.Click += new System.EventHandler(this.WMBtn_Click);
             // 
             // panel1
             // 
